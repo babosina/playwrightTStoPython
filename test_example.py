@@ -47,7 +47,7 @@ def test_get_tags_api_context(playwright: Playwright) -> None:
 
 
 # advances approach - use context fixture
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def api_context(playwright: Playwright) -> Generator[APIRequestContext, Any, None]:
     context = playwright.request.new_context(
         base_url="https://api.realworld.show/api/",
