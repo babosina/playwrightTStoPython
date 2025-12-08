@@ -6,3 +6,12 @@ requires-python = ">=3.13"
 dependencies = [
     "pytest-playwright>=0.7.2",
 ]
+
+[tool.pytest.ini_options]
+base_url = ""
+addopts = [
+    #    "--headed",
+    "--browser", "chromium",
+#    "--browser", "firefox",
+    "--html=report.html", "--self-contained-html"
+]
