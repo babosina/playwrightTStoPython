@@ -1,0 +1,8 @@
+[project]
+name = "playwrighttstopython"
+version = "0.1.0"
+description = "API testing framework migration from TS to Python"
+requires-python = ">=3.13"
+dependencies = [
+    "pytest-playwright>=0.7.2",
+]
