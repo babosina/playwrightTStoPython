@@ -11,7 +11,7 @@ dependencies = [
 base_url = ""
 addopts = [
     #    "--headed",
-    "--browser", "chromium",
-#    "--browser", "firefox",
+    "--browser", "chromium", # for the sample UI test
+    #    "--browser", "firefox",
     "--html=report.html", "--self-contained-html"
 ]
