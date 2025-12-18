@@ -1,3 +1,5 @@
+Based on: https://github.com/babosina/playwrightTS
+
 1. Install pytest-playwright
 2. Install browsers: `playwright install`
 3. For UV-based project configuration is put to the project.toml file

@@ -24,7 +24,7 @@ def test_get_tags_page(page: Page) -> None:
     :param page:
     :return:
     """
-    response = page.request.get("https://api.realworld.show/api/tags")
+    response = page.request.get("http://localhost:8000/api/tags")
     assert response.status == 200
 
 
@@ -37,7 +37,7 @@ def test_get_tags_api_context(playwright: Playwright) -> None:
     :return:
     """
     request_context: APIRequestContext = playwright.request.new_context(
-        base_url="https://api.realworld.show/api/"
+        base_url="http://localhost:8000/api/"
     )
     response = request_context.get("./tags")
     assert response.ok
@@ -50,7 +50,7 @@ def test_get_tags_api_context(playwright: Playwright) -> None:
 @pytest.fixture(scope="session")
 def api_context(playwright: Playwright) -> Generator[APIRequestContext, Any, None]:
     context = playwright.request.new_context(
-        base_url="https://api.realworld.show/api/",
+        base_url="http://localhost:8000/api/",
         extra_http_headers={
             "Accept": "application/json"
         }
