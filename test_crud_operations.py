@@ -1,7 +1,11 @@
 import pytest
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from typing import Any, Generator
-from playwright.sync_api import Page, expect, APIRequestContext, Playwright, APIResponse
+from playwright.sync_api import APIRequestContext, Playwright, APIResponse
 
 
 @pytest.fixture(scope="session")
@@ -31,13 +35,13 @@ def test_get_all_articles(api_context: APIRequestContext) -> None:
 
 
 def test_create_article(api_context: APIRequestContext) -> None:
-    data = {
+    auth_data = {
         "user": {
-            "password": "@$4ca*aGV$",
-            "email": "pythonqa5@gmail.com"
+            "password": os.getenv("PASSWORD"),
+            "email": os.getenv("EMAIL")
         }
     }
-    token_response: APIResponse = api_context.post("./users/login", data=data)
+    token_response: APIResponse = api_context.post("./users/login", data=auth_data)
     token = token_response.json().get("user").get("token")
 
     new_article_data = {
@@ -65,4 +69,57 @@ def test_create_article(api_context: APIRequestContext) -> None:
     article_to_delete = get_articles_response.json().get("articles")[0].get("slug")
 
     delete_article_response = api_context.delete(f"./articles/{article_to_delete}")
+    assert delete_article_response.ok
+
+
+def test_create_update_delete_article(api_context: APIRequestContext) -> None:
+    auth_data = {
+        "user": {
+            "password": os.getenv("PASSWORD"),
+            "email": os.getenv("EMAIL")
+        }
+    }
+
+    article_data = {
+        "article": {
+            "title": "Testing Update Delete",
+            "description": "Amazing features",
+            "body": "Come use Postman for the API testing with us!",
+            "tagList": []
+        }
+    }
+
+    token_response: APIResponse = api_context.post("./users/login", data=auth_data)
+    token = token_response.json().get("user").get("token")
+    headers = {"Authorization": f"Token {token}"}
+
+    response: APIResponse = api_context.post("http://localhost:8000/api/articles",
+                                             headers=headers,
+                                             data=article_data)
+    response_json = response.json()
+
+    assert response.ok
+    assert response_json.get("article").get("title") == "Testing Update Delete"
+
+    articles_response: APIResponse = api_context.get("./articles", headers=headers)
+    articles_response_json = articles_response.json()
+    article_to_delete = articles_response_json.get("articles")[0].get("slug")
+
+    modified_title = "Testing Update Delete From Code"
+
+    update_article_response: APIResponse = api_context.put(f"./articles/{article_to_delete}",
+                                                           headers=headers,
+                                                           data={
+                                                               "article": {
+                                                                   "title": modified_title
+                                                               }
+                                                           })
+
+    update_article_response_json = update_article_response.json()
+    new_slug = update_article_response_json.get("article").get("slug")
+
+    assert update_article_response.ok
+
+    delete_article_response: APIResponse = api_context.delete(f"./articles/{new_slug}",
+                                                              headers=headers)
     assert delete_article_response.ok
