@@ -1,3 +1,6 @@
+from urllib.parse import urljoin, urlencode
+
+
 class RequestHandler:
     """
     Handles the construction of API request components including URL, path, query
@@ -19,9 +22,12 @@ class RequestHandler:
     :type _api_body: dict
     """
 
-    def __init__(self):
+    def __init__(self, request, base_url: str):
+        self._request = request
+
         # request state
         self._base_url: str | None = None
+        self._default_base_url: str = base_url
         self._api_path: str = ""
         self._query_params: dict = dict()
         self._api_headers: dict[str, str] = dict()
@@ -46,3 +52,13 @@ class RequestHandler:
     def body(self, body: dict):
         self._api_body = body
         return self
+
+    def _get_url(self):
+        base_url = self._base_url or self._default_base_url
+        url = urljoin(base_url, self._api_path)
+
+        if self._query_params:
+            query_string = urlencode(self._query_params)
+            url = f"{url}?{query_string}"
+
+        return url
