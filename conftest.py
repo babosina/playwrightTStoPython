@@ -7,7 +7,7 @@ from utils.request_handler import RequestHandler
 
 
 @pytest.fixture
-def request(playwright: Playwright) -> Generator[RequestHandler, None, None]:
+def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]:
     base_url = "http://localhost:8000/api/"
     request = RequestHandler(playwright.request, base_url=base_url)
     yield request

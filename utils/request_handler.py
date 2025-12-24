@@ -22,8 +22,8 @@ class RequestHandler:
     :type _api_body: dict
     """
 
-    def __init__(self, request, base_url: str):
-        self._request = request
+    def __init__(self, api_request, base_url: str):
+        self._request = api_request
 
         # request state
         self._base_url: str | None = None
