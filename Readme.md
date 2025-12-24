@@ -91,4 +91,5 @@ context.close()
    and add to toml
    "--html=report.html", "--self-contained-html"
 
-8. 
+8. Allure report
+   allure generate allure-results -o allure-report --clean

@@ -5,6 +5,9 @@ description = "API testing framework migration from TS to Python"
 requires-python = ">=3.13"
 dependencies = [
     "pytest-playwright>=0.7.2",
+    "pytest-html>=4.1.1",
+    "allure-pytest>=2.13.0",
+    "python-dotenv>=1.2.1",
 ]
 
 [tool.pytest.ini_options]
@@ -13,5 +16,9 @@ addopts = [
     #    "--headed",
     #    "--browser", "chromium", # for the sample UI test
     #    "--browser", "firefox",
-    "--html=report.html", "--self-contained-html"
+    "--html=report.html", "--self-contained-html",
+    "--alluredir=allure-results",
+    "--tracing=retain-on-failure",
+    "--video=retain-on-failure",
+    "--screenshot=only-on-failure"
 ]
