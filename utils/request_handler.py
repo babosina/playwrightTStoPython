@@ -70,3 +70,24 @@ class RequestHandler:
         response = self._request.get(url, headers=self._api_headers)
         assert response.status == status_code
         return response.json()
+
+    def post_request(self, status_code: int):
+        url = self._get_url()
+        response = self._request.post(url,
+                                      headers=self._api_headers,
+                                      data=self._api_body)
+        assert response.status == status_code
+        return response.json()
+
+    def put_request(self, status_code: int):
+        url = self._get_url()
+        response = self._request.put(url,
+                                     headers=self._api_headers,
+                                     data=self._api_body)
+        assert response.status == status_code
+        return response.json()
+
+    def delete_request(self, status_code: int):
+        url = self._get_url()
+        response = self._request.delete(url, headers=self._api_headers)
+        assert response.status == status_code

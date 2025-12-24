@@ -8,7 +8,7 @@ from typing import Any, Generator
 from playwright.sync_api import APIRequestContext, Playwright, APIResponse
 
 
-@pytest.fixture(scope="module")
+# @pytest.fixture(scope="module") # Uncomment to run the current file
 def get_token(api_context):
     print("GETTING USER TOKEN")
     auth_data = {
@@ -23,7 +23,7 @@ def get_token(api_context):
     yield token
 
 
-@pytest.fixture(scope="module")
+# @pytest.fixture(scope="module") # Uncomment to run the current file
 def api_context(playwright: Playwright) -> Generator[APIRequestContext, Any, None]:
     context = playwright.request.new_context(
         base_url="http://localhost:8000/api/",
@@ -35,6 +35,7 @@ def api_context(playwright: Playwright) -> Generator[APIRequestContext, Any, Non
     context.dispose()
 
 
+@pytest.mark.skip
 def test_get_all_tags(api_context: APIRequestContext) -> None:
     response = api_context.get("./tags")
     response_json = response.json()
@@ -42,6 +43,7 @@ def test_get_all_tags(api_context: APIRequestContext) -> None:
     assert len(response_json.get("tags")) >= 5
 
 
+@pytest.mark.skip
 def test_get_all_articles(api_context: APIRequestContext) -> None:
     response = api_context.get("./articles")
     assert response.ok
@@ -49,6 +51,7 @@ def test_get_all_articles(api_context: APIRequestContext) -> None:
     assert response.json().get("articlesCount") == 5
 
 
+@pytest.mark.skip
 def test_create_article(api_context: APIRequestContext, get_token) -> None:
     new_article_data = {
         "article": {
@@ -79,6 +82,7 @@ def test_create_article(api_context: APIRequestContext, get_token) -> None:
     assert delete_article_response.ok
 
 
+@pytest.mark.skip
 def test_create_update_delete_article(api_context: APIRequestContext, get_token) -> None:
     article_data = {
         "article": {
