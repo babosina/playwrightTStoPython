@@ -1,5 +1,7 @@
 from urllib.parse import urljoin, urlencode
 
+from playwright.sync_api import APIRequestContext
+
 
 class RequestHandler:
     """
@@ -22,8 +24,8 @@ class RequestHandler:
     :type _api_body: dict
     """
 
-    def __init__(self, api_request, base_url: str):
-        self._request = api_request
+    def __init__(self, api_request: APIRequestContext, base_url: str):
+        self._request: APIRequestContext = api_request
 
         # request state
         self._base_url: str | None = None
@@ -62,3 +64,9 @@ class RequestHandler:
             url = f"{url}?{query_string}"
 
         return url
+
+    def get_request(self, status_code: int):
+        url = self._get_url()
+        response = self._request.get(url, headers=self._api_headers)
+        assert response.status == status_code
+        return response.json()

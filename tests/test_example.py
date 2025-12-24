@@ -41,13 +41,11 @@ def test_get_tags_api_context(playwright: Playwright) -> None:
     )
     response = request_context.get("./tags")
     assert response.ok
-    print(response.json())
-
     request_context.dispose()
 
 
 # advances approach - use context fixture
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def api_context(playwright: Playwright) -> Generator[APIRequestContext, Any, None]:
     context = playwright.request.new_context(
         base_url="http://localhost:8000/api/",
