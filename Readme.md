@@ -1,95 +1,115 @@
-Based on: https://github.com/babosina/playwrightTS
+# Playwright Python API Testing Framework
 
-1. Install pytest-playwright
-2. Install browsers: `playwright install`
-3. For UV-based project configuration is put to the project.toml file
-   Example:
-   [tool.pytest.ini_options]
-   base_url = "https://example.com"
-   addopts = [
-   "--headed",
-   "--browser", "chromium",
-   "--browser", "firefox",
-   "--browser", "webkit",
-   "--slowmo", "100",
-   "--tracing", "on",
-   "-n", "4"
-   ]
-   testpaths = ["tests"]
-   python_files = ["test_*.py"]
-4. For the common pytest.ini option:
-   [pytest]
+API testing framework migrated from TypeScript to Python. Based on: https://github.com/babosina/playwrightTS
 
-# Base URL for tests
+## Prerequisites
 
-base_url = https://example.com
+- Python 3.13+
+- uv (recommended) or pip
 
-# Number of parallel workers
+## Project Setup
 
-addopts =
---headed
---browser chromium
---browser firefox
---browser webkit
---slowmo 100
---tracing on
--n 4
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd playwrightTStoPython
+   ```
 
-# Test discovery patterns
+2. **Install dependencies**
+   ```bash
+   uv pip install -e .
+   ```
+   Or with pip:
+   ```bash
+   pip install -e .
+   ```
 
-testpaths = tests
-python_files = test_*.py
-python_classes = Test*
-python_functions = test_*
+3. **Configure environment variables**
 
-5. Advanced conftest.py file
-   import pytest
-   from playwright.sync_api import Browser, BrowserContext
+   Create a `.env` file in the project root:
+   ```
+   EMAIL=your-email@example.com
+   PASSWORD=your-password
+   ```
 
-# Configure base URL
+4. **Update base URL (if needed)**
 
-@pytest.fixture(scope="session")
-def base_url():
-return "https://example.com"
+   The project is configured for `localhost:8000`. To change it, update `conftest.py:17`:
+   ```python
+   base_url = "http://localhost:8000/api/"
+   ```
 
-# Browser context configuration (similar to TS projects)
+## Running Tests
 
-@pytest.fixture(scope="session")
-def browser_context_args(browser_context_args):
-return {
-**browser_context_args,
-"viewport": {"width": 1920, "height": 1080},
-"ignore_https_errors": True,
-"user_agent": "Custom User Agent",
-}
+**Run all tests:**
+```bash
+pytest
+```
 
-# Configure different browser projects
+**Run specific test file:**
+```bash
+pytest tests/test_smoke.py
+```
 
-@pytest.fixture(params=["chromium", "firefox", "webkit"])
-def browser_name(request):
-return request.param
+**Run with parallel execution:**
+```bash
+pytest -n 4
+```
 
-# Storage state for authenticated tests
+## Project Structure
 
-@pytest.fixture(scope="session")
-def context_with_auth(browser: Browser):
-context = browser.new_context(storage_state="auth.json")
-yield context
-context.close()
+```
+├── tests/              # Test suites
+│   ├── test_smoke.py
+│   ├── test_crud_operations.py
+│   └── test_example.py
+├── utils/              # Utilities and helpers
+│   ├── apilogger.py           # Request/response logging
+│   ├── custom_expect.py       # Custom assertions (Expect class)
+│   ├── request_handler.py     # API request wrapper
+├── conftest.py         # Pytest fixtures (api_request, get_token)
+├── pyproject.toml      # Project configuration
+└── .env               # Environment variables (not in git)
+```
 
-6. Common Playwright pytest options:
-   --headed / --headless: Run in headed/headless mode
-   --browser chromium|firefox|webkit: Specify browser(s)
-   --slowmo <ms>: Slow down operations
-   --tracing on|off|retain-on-failure: Enable tracing
-   --video on|off|retain-on-failure: Record videos
-   --screenshot on|off|only-on-failure: Take screenshots
-   -n <workers>: Number of parallel workers (requires pytest-xdist)
+## Key Features
 
-7. Report
-   uv pip install pytest-html
-   and add to toml
-   "--html=report.html", "--self-contained-html"
+- **Custom Request Handler**: Fluent API for building requests (`RequestHandler` class)
+- **Custom Assertions**: `Expect` class with chainable assertions
+- **Request/Response Logging**: Automatic logging with custom status code validation
+- **Token Authentication**: Reusable `get_token` fixture
+- **HTML Reports**: Generated in `report.html`
+- **Allure Reports**: Results stored in `allure-results/`
 
-8. Allure report
-   allure generate allure-results -o allure-report --clean
+## Generating Reports
+
+**HTML Report:**
+Generated automatically after test run in `report.html`
+
+**Allure Report:**
+```bash
+allure generate allure-results -o allure-report --clean
+allure open allure-report
+```
+
+## Configuration
+
+Test configuration is in `pyproject.toml`:
+```toml
+[tool.pytest.ini_options]
+base_url = ""
+addopts = [
+    "--html=report.html", "--self-contained-html",
+    "--alluredir=allure-results",
+    "--tracing=retain-on-failure",
+    "--video=retain-on-failure",
+    "--screenshot=only-on-failure"
+]
+```
+
+## Notes
+
+- This project focuses on **API testing only** (no browser UI testing)
+- Custom `Expect` class provides JavaScript-like assertion syntax
+- See `Differences.md` for details on TS to Python migration differences
+
