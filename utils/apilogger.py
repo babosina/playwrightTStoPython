@@ -33,6 +33,7 @@ class APILogger:
         })
 
     def get_recent_logs(self):
-        for log in self._recent_logs:
-            print(f"""====={log["type"]}=====\n{json.dumps(log["data"], indent=2)}\n""")
-        return self._recent_logs
+        return "\n\n".join([
+            f"====={log['type']}=====\n{json.dumps(log['data'], indent=2)}"
+            for log in self._recent_logs
+        ])
