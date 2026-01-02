@@ -2,6 +2,8 @@ from urllib.parse import urljoin, urlencode
 
 from playwright.sync_api import APIRequestContext
 
+from utils.apilogger import APILogger
+
 
 class RequestHandler:
     """
@@ -24,8 +26,9 @@ class RequestHandler:
     :type _api_body: dict
     """
 
-    def __init__(self, api_request: APIRequestContext, base_url: str):
+    def __init__(self, api_request: APIRequestContext, base_url: str, logger: APILogger):
         self._request: APIRequestContext = api_request
+        self._logger: APILogger = logger
 
         # request state
         self._base_url: str | None = None
@@ -67,27 +70,41 @@ class RequestHandler:
 
     def get_request(self, status_code: int):
         url = self._get_url()
+        self._logger.log_request("GET", url, self._api_headers)
         response = self._request.get(url, headers=self._api_headers)
-        assert response.status == status_code
+        self._logger.log_response(response.status, response.json())
+        self._status_code_validator(response.status, status_code)
         return response.json()
 
     def post_request(self, status_code: int):
         url = self._get_url()
+        self._logger.log_request("POST", url, self._api_headers, self._api_body)
         response = self._request.post(url,
                                       headers=self._api_headers,
                                       data=self._api_body)
-        assert response.status == status_code
+        self._logger.log_response(response.status, response.json())
+        self._status_code_validator(response.status, status_code)
         return response.json()
 
     def put_request(self, status_code: int):
         url = self._get_url()
+        self._logger.log_request("PUT", url, self._api_headers, self._api_body)
         response = self._request.put(url,
                                      headers=self._api_headers,
                                      data=self._api_body)
-        assert response.status == status_code
+        self._logger.log_response(response.status, response.json())
+        self._status_code_validator(response.status, status_code)
         return response.json()
 
     def delete_request(self, status_code: int):
         url = self._get_url()
+        self._logger.log_request("DELETE", url, self._api_headers)
         response = self._request.delete(url, headers=self._api_headers)
-        assert response.status == status_code
+        self._logger.log_response(response.status)
+        self._status_code_validator(response.status, status_code)
+
+    def _status_code_validator(self, actual_status: int, expected_status: int):
+        if actual_status != expected_status:
+            logs = self._logger.get_recent_logs()
+            error = f"Expected status code {expected_status} but got {actual_status}\n\nRecent API activity: \n{logs}"
+            raise AssertionError(error)

@@ -1,7 +1,7 @@
 import json
 
 
-class Logger:
+class APILogger:
 
     def __init__(self):
         self._recent_logs: list[dict] = []
@@ -35,3 +35,4 @@ class Logger:
     def get_recent_logs(self):
         for log in self._recent_logs:
             print(f"""====={log["type"]}=====\n{json.dumps(log["data"], indent=2)}\n""")
+        return self._recent_logs

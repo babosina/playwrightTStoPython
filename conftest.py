@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from typing import Generator
 from playwright.sync_api import Playwright
 
+from utils.apilogger import APILogger
 from utils.request_handler import RequestHandler
 
 load_dotenv()
@@ -13,8 +14,9 @@ load_dotenv()
 @pytest.fixture
 def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]:
     base_url = "http://localhost:8000/api/"
+    logger = APILogger()
     request_context = playwright.request.new_context()
-    request = RequestHandler(request_context, base_url=base_url)
+    request = RequestHandler(request_context, base_url=base_url, logger=logger)
     yield request
     request_context.dispose()
 
