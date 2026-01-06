@@ -4,6 +4,14 @@ from utils.apilogger import APILogger
 
 
 class Expect:
+    """
+    Custom assertion class for API testing with logging capabilities.
+
+    Provides a fluent interface for making assertions on API responses and logging recent API activity.
+
+    Can be extended by adding should_not_* methods for negated assertions.
+    Can be extended by adding should_less_then_or_equal and other custom assertions.
+    """
     def __init__(self, actual: Any, logger: APILogger | None = None):
         self.actual = actual
         self.logger = logger

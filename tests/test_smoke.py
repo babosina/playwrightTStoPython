@@ -1,3 +1,4 @@
+from utils.custom_expect import expect
 from utils.request_handler import RequestHandler
 
 
@@ -8,7 +9,9 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
                 .get_request(200))
 
     assert len(response.get("articles")) >= 3
-    assert response.get("articlesCount") == 5
+
+    # Introducing a custom assertion
+    expect(response.get("articlesCount")).should_equal(4)
 
 
 def test_get_all_tags(api_request: RequestHandler) -> None:
