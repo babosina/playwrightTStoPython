@@ -72,6 +72,7 @@ class RequestHandler:
         url = self._get_url()
         self._logger.log_request("GET", url, self._api_headers)
         response = self._request.get(url, headers=self._api_headers)
+        self._cleanup_fields()
         self._logger.log_response(response.status, response.json())
         self._status_code_validator(response.status, status_code)
         return response.json()
@@ -82,6 +83,7 @@ class RequestHandler:
         response = self._request.post(url,
                                       headers=self._api_headers,
                                       data=self._api_body)
+        self._cleanup_fields()
         self._logger.log_response(response.status, response.json())
         self._status_code_validator(response.status, status_code)
         return response.json()
@@ -92,6 +94,7 @@ class RequestHandler:
         response = self._request.put(url,
                                      headers=self._api_headers,
                                      data=self._api_body)
+        self._cleanup_fields()
         self._logger.log_response(response.status, response.json())
         self._status_code_validator(response.status, status_code)
         return response.json()
@@ -100,6 +103,7 @@ class RequestHandler:
         url = self._get_url()
         self._logger.log_request("DELETE", url, self._api_headers)
         response = self._request.delete(url, headers=self._api_headers)
+        self._cleanup_fields()
         self._logger.log_response(response.status)
         self._status_code_validator(response.status, status_code)
 
@@ -108,3 +112,10 @@ class RequestHandler:
             logs = self._logger.get_recent_logs()
             error = f"Expected status code {expected_status} but got {actual_status}\n\nRecent API activity: \n{logs}"
             raise AssertionError(error)
+
+    def _cleanup_fields(self):
+        self._api_body = dict()
+        self._api_headers = dict()
+        self._base_url = None
+        self._api_path = ""
+        self._query_params = dict()
