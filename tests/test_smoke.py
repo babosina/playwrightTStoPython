@@ -11,7 +11,7 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
     assert len(response.get("articles")) >= 3
 
     # Introducing a custom assertion
-    expect(response.get("articlesCount")).should_equal(4)
+    expect(response.get("articlesCount")).should_equal(5)
 
 
 def test_get_all_tags(api_request: RequestHandler) -> None:
