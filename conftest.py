@@ -23,21 +23,23 @@ def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]
     request_context.dispose()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def get_token(api_request):
-    print("TOKEN FIXTURE")
     auth_data = {
         "user": {
             "password": os.getenv("PASSWORD"),
             "email": os.getenv("EMAIL")
         }
     }
-    token_response = (api_request
-                      .path("./users/login")
-                      .body(auth_data)
-                      .post_request(200))
-    token = token_response.get("user").get("token")
-    yield token
+    try:
+        token_response = (api_request
+                          .path("./users/login")
+                          .body(auth_data)
+                          .post_request(200))
+        token = token_response.get("user").get("token")
+        yield token
+    except RuntimeError as e:
+        raise RuntimeError(f"Failed to obtain token: {e}")
 
 
 # An example of a fixture to orchestrate test configuration
