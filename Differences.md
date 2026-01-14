@@ -152,3 +152,11 @@ Both versions have auto-waiting built into locators and assertions, but:
 - TypeScript: All operations are promises
 - Python sync_api: Blocking operations
 - Python async_api: Same as TypeScript
+
+### Summary of Scope Mapping:
+
+| Playwright TS | Playwright Python (Pytest) |
+| --- | --- |
+| `scope: 'worker'` | `scope="session"` |
+| `scope: 'test'` | `scope="function"` (default) |
+| `extraHTTPHeaders` | `extra_http_headers` |

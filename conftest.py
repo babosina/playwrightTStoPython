@@ -11,8 +11,15 @@ from utils.custom_expect import set_custom_api_logger
 
 load_dotenv()
 
+"""
+Note: If RequestHandler or api_request relies on playwright
+(which is usually session or function scoped depending on the setup),
+ensure that the underlying Playwright request_context is also compatible with the session scope.
+By default, playwright fixture is session-scoped
+"""
 
-@pytest.fixture
+
+@pytest.fixture(scope="session")
 def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]:
     base_url = os.getenv("BASE_URL")
     logger = APILogger()
@@ -23,7 +30,7 @@ def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]
     request_context.dispose()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def get_token(api_request):
     auth_data = {
         "user": {
