@@ -113,3 +113,5 @@ addopts = [
 - Custom `Expect` class provides JavaScript-like assertion syntax
 - See `Differences.md` for details on TS to Python migration differences
 
+## Parallel execution (workers concept)
+- Run with: `pytest -n 4` (4 parallel workers)
