@@ -31,20 +31,21 @@ def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]
 
 
 @pytest.fixture(scope="session")
-def get_token(api_request):
+def get_token(api_request, request):
+    # handle default email/password if else was not provided
+    credentials = getattr(request, "param", {
+        "email": os.getenv("EMAIL"),
+        "password": os.getenv("PASSWORD")
+    })
     auth_data = {
-        "user": {
-            "password": os.getenv("PASSWORD"),
-            "email": os.getenv("EMAIL")
-        }
+        "user": credentials
     }
     try:
         token_response = (api_request
                           .path("./users/login")
                           .body(auth_data)
                           .post_request(200))
-        token = token_response.get("user").get("token")
-        yield token
+        return token_response.get("user").get("token")
     except RuntimeError as e:
         raise RuntimeError(f"Failed to obtain token: {e}")
 

@@ -1,5 +1,11 @@
+import os
+import pytest
+
+from dotenv import load_dotenv
 from utils.custom_expect import expect
 from utils.request_handler import RequestHandler
+
+load_dotenv()
 
 
 def test_get_all_articles(api_request: RequestHandler) -> None:
@@ -14,7 +20,11 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
     expect(response.get("articlesCount")).should_equal(5)
 
 
-def test_get_all_tags(api_request: RequestHandler) -> None:
+# example of passing different credentials for a get_token fixture
+@pytest.mark.parametrize("get_token", [
+    {"email": os.getenv("EMAIL_JOHN"), "password": os.getenv("PASSWORD_JOHN")}
+], indirect=True)
+def test_get_all_tags(api_request: RequestHandler, get_token) -> None:
     response = api_request.path("./tags").get_request(200)
     assert "tags" in response
 
