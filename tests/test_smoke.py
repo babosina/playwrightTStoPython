@@ -4,6 +4,7 @@ import pytest
 from dotenv import load_dotenv
 from utils.custom_expect import expect
 from utils.request_handler import RequestHandler
+from utils.schema_validator import validate_schema
 
 load_dotenv()
 
@@ -26,6 +27,7 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
 ], indirect=True)
 def test_get_all_tags(api_request: RequestHandler, get_token) -> None:
     response = api_request.path("./tags").get_request(200)
+    validate_schema("tags", "GET_tags", response_body=response)
     assert "tags" in response
 
 

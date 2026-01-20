@@ -9,6 +9,7 @@ dependencies = [
     "allure-pytest>=2.13.0",
     "python-dotenv>=1.2.1",
     "pytest-xdist>=3.8.0",
+    "jsonschema>=4.26.0",
 ]
 
 [tool.pytest.ini_options]
