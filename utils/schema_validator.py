@@ -21,25 +21,9 @@ def validate_schema(directory_name: str,
                     response_body: dict,
                     create_schema_flag: bool = False):
     schema_path = SCHEMA_BASE_PATH / directory_name / f'{file_name}_schema.json'
-    builder = SchemaBuilder()
-    builder.add_object(response_body)
-    # Explicitly specify the metaschema URI to stop the DeprecationWarning
-    schema = builder.to_schema()
-    schema['$schema'] = 'http://json-schema.org/draft-07/schema#'
 
     if create_schema_flag:
-        try:
-            # Create the parent directory if it doesn't exist
-            # parents=True: creates all missing parent directories (like mkdir -p)
-            # exist_ok=True: doesn't raise an error if the directory already exists
-            schema_path.parent.mkdir(parents=True, exist_ok=True)
-
-            with open(schema_path, 'w') as f:
-                json.dump(schema, f, indent=2)
-        except PermissionError:
-            raise PermissionError(f"Don't have permissions to write to: {schema_path}")
-        except OSError as e:
-            raise OSError(f"Failed to create schema file at: {schema_path}")
+        generate_new_schema(schema_path, response_body)
 
     schema = load_schema(schema_path)
 
@@ -52,3 +36,24 @@ def validate_schema(directory_name: str,
             f"Schema validation failed at '{path}': {e.message}\n\n"
             f"Actual response body:\n{json.dumps(response_body, indent=2)}"
         ) from None
+
+
+def generate_new_schema(schema_path: pathlib.Path, response_body: dict):
+    builder = SchemaBuilder()
+    builder.add_object(response_body)
+    # Explicitly specify the metaschema URI to stop the DeprecationWarning
+    schema = builder.to_schema()
+    schema['$schema'] = 'http://json-schema.org/draft-07/schema#'
+
+    try:
+        # Create the parent directory if it doesn't exist
+        # parents=True: creates all missing parent directories (like mkdir -p)
+        # exist_ok=True: doesn't raise an error if the directory already exists
+        schema_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(schema_path, 'w') as f:
+            json.dump(schema, f, indent=2)
+    except PermissionError:
+        raise PermissionError(f"Don't have permissions to write to: {schema_path}")
+    except OSError as e:
+        raise OSError(f"Failed to create schema file at: {schema_path}")
