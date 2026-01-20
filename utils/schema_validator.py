@@ -1,6 +1,7 @@
 import pathlib
 import json
 
+from genson import SchemaBuilder
 from jsonschema import validate, ValidationError
 
 SCHEMA_BASE_PATH = pathlib.Path(__file__).parent.parent / 'response-schemas'
@@ -17,9 +18,29 @@ def load_schema(schema_path: pathlib.Path) -> dict:
 
 def validate_schema(directory_name: str,
                     file_name: str,
-                    response_body: dict):
+                    response_body: dict,
+                    create_schema_flag: bool = False):
     schema_path = SCHEMA_BASE_PATH / directory_name / f'{file_name}_schema.json'
+    builder = SchemaBuilder()
+    builder.add_object(response_body)
+    schema = builder.to_schema()
+
+    if create_schema_flag:
+        try:
+            # Create the parent directory if it doesn't exist
+            # parents=True: creates all missing parent directories (like mkdir -p)
+            # exist_ok=True: doesn't raise an error if the directory already exists
+            schema_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(schema_path, 'w') as f:
+                json.dump(schema, f, indent=2)
+        except PermissionError:
+            raise PermissionError(f"Don't have permissions to write to: {schema_path}")
+        except OSError as e:
+            raise OSError(f"Failed to create schema file at: {schema_path}")
+
     schema = load_schema(schema_path)
+
     try:
         validate(instance=response_body, schema=schema)
     except ValidationError as e:

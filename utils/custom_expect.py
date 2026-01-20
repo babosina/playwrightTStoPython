@@ -30,16 +30,17 @@ class Expect:
             )
         return self
 
-    def should_match_schema(self, directory_name: str, file_name: str):
+    def should_match_schema(self, directory_name: str, file_name: str, create_schema_flag: bool = False):
         """
         Validates the actual value against a JSON schema.
 
         Args:
             directory_name: The subdirectory name under response-schemas
             file_name: The schema file name (without _schema.json suffix)
+            create_schema_flag: If True, creates the schema file if it doesn't exist
         """
         try:
-            validate_schema(directory_name, file_name, self.actual)
+            validate_schema(directory_name, file_name, self.actual, create_schema_flag)
         except AssertionError as e:
             logs = self.logger.get_recent_logs() if self.logger else "No logs available"
             raise AssertionError(
@@ -47,6 +48,7 @@ class Expect:
                 f"Recent API activity:\n\n{logs}"
             )
         return self
+
 
 _api_logger: APILogger | None = None
 
