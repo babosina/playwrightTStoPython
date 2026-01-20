@@ -1,7 +1,7 @@
 import pathlib
 import json
 
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 
 SCHEMA_BASE_PATH = pathlib.Path(__file__).parent.parent / 'response-schemas'
 
@@ -20,4 +20,12 @@ def validate_schema(directory_name: str,
                     response_body: dict):
     schema_path = SCHEMA_BASE_PATH / directory_name / f'{file_name}_schema.json'
     schema = load_schema(schema_path)
-    validate(instance=response_body, schema=schema)
+    try:
+        validate(instance=response_body, schema=schema)
+    except ValidationError as e:
+        # Extract key information for a clearer error message
+        path = ".".join(str(p) for p in e.path) if e.path else "root"
+        raise AssertionError(
+            f"Schema validation failed at '{path}': {e.message}\n\n"
+            f"Actual response body:\n{json.dumps(response_body, indent=2)}"
+        ) from None

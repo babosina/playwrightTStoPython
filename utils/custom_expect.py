@@ -1,6 +1,7 @@
 from typing import Any
 
 from utils.apilogger import APILogger
+from utils.schema_validator import validate_schema
 
 
 class Expect:
@@ -12,6 +13,7 @@ class Expect:
     Can be extended by adding should_not_* methods for negated assertions.
     Can be extended by adding should_less_then_or_equal and other custom assertions.
     """
+
     def __init__(self, actual: Any, logger: APILogger | None = None):
         self.actual = actual
         self.logger = logger
@@ -28,6 +30,23 @@ class Expect:
             )
         return self
 
+    def should_match_schema(self, directory_name: str, file_name: str):
+        """
+        Validates the actual value against a JSON schema.
+
+        Args:
+            directory_name: The subdirectory name under response-schemas
+            file_name: The schema file name (without _schema.json suffix)
+        """
+        try:
+            validate_schema(directory_name, file_name, self.actual)
+        except AssertionError as e:
+            logs = self.logger.get_recent_logs() if self.logger else "No logs available"
+            raise AssertionError(
+                f"\n{str(e)}\n\n"
+                f"Recent API activity:\n\n{logs}"
+            )
+        return self
 
 _api_logger: APILogger | None = None
 

@@ -27,7 +27,9 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
 ], indirect=True)
 def test_get_all_tags(api_request: RequestHandler, get_token) -> None:
     response = api_request.path("./tags").get_request(200)
-    validate_schema("tags", "GET_tags", response_body=response)
+    # custom validate schema assertion
+    expect(response).should_match_schema("tags", "GET_tags")
+    # validate_schema("tags", "GET_tags", response_body=response)
     assert "tags" in response
 
 
