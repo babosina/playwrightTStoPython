@@ -23,7 +23,9 @@ def validate_schema(directory_name: str,
     schema_path = SCHEMA_BASE_PATH / directory_name / f'{file_name}_schema.json'
     builder = SchemaBuilder()
     builder.add_object(response_body)
+    # Explicitly specify the metaschema URI to stop the DeprecationWarning
     schema = builder.to_schema()
+    schema['$schema'] = 'http://json-schema.org/draft-07/schema#'
 
     if create_schema_flag:
         try:

@@ -19,6 +19,7 @@ def test_get_all_articles(api_request: RequestHandler) -> None:
 
     # Introducing a custom assertion
     expect(response.get("articlesCount")).should_equal(5)
+    expect(response).should_match_schema("articles", "GET_articles")
 
 
 # example of passing different credentials for a get_token fixture
@@ -51,6 +52,7 @@ def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
                                .post_request(201))
     assert create_article_response.get("article").get("title") == "Testing APIs with Playwright from Code"
     assert create_article_response.get("article").get("tagList") == ["Playwright"]
+    expect(create_article_response).should_match_schema("articles", "POST_articles")
 
     get_articles_response = (api_request
                              .path("./articles")
@@ -97,6 +99,7 @@ def test_crud_article(api_request: RequestHandler, get_token) -> None:
                                .headers(headers)
                                .body({"article": {"title": modified_title}})
                                .put_request(200))
+    expect(update_article_response).should_match_schema("articles", "PUT_articles")
 
     new_slug = update_article_response.get("article").get("slug")
 
