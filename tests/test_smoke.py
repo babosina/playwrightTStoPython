@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from utils.custom_expect import expect
 from utils.request_handler import RequestHandler
 from utils.schema_validator import validate_schema
+from copy import deepcopy
+from request_data.POST_article import NEW_ARTICLE_DATA, CRUD_ARTICLE
 
 load_dotenv()
 
@@ -35,22 +37,14 @@ def test_get_all_tags(api_request: RequestHandler, get_token) -> None:
 
 
 def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
-    new_article_data = {
-        "article": {
-            "title": "Testing APIs with Playwright from Code",
-            "description": "Amazing features",
-            "body": "Come use Postman for the API testing with us!",
-            "tagList": [
-                "Playwright"
-            ]
-        }
-    }
+    new_article_data = deepcopy(NEW_ARTICLE_DATA)
+    new_article_data["article"]["title"] = "Import from file"
     create_article_response = (api_request
                                .path("./articles")
                                .headers({"Authorization": f"Token {get_token}"})
                                .body(new_article_data)
                                .post_request(201))
-    assert create_article_response.get("article").get("title") == "Testing APIs with Playwright from Code"
+    assert create_article_response.get("article").get("title") == "Import from file"
     assert create_article_response.get("article").get("tagList") == ["Playwright"]
     expect(create_article_response).should_match_schema("articles", "POST_articles")
 
@@ -58,7 +52,7 @@ def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
                              .path("./articles")
                              .headers({"Authorization": f"Token {get_token}"})
                              .get_request(200))
-    assert get_articles_response.get("articles")[0].get("title") == "Testing APIs with Playwright from Code"
+    assert get_articles_response.get("articles")[0].get("title") == "Import from file"
     article_to_delete = get_articles_response.get("articles")[0].get("slug")
 
     (api_request
@@ -68,20 +62,12 @@ def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
 
 
 def test_crud_article(api_request: RequestHandler, get_token) -> None:
-    article_data = {
-        "article": {
-            "title": "Testing Update Delete",
-            "description": "Amazing features",
-            "body": "Come use Postman for the API testing with us!",
-            "tagList": []
-        }
-    }
     headers = {"Authorization": f"Token {get_token}"}
 
     response = (api_request
                 .path("http://localhost:8000/api/articles")
                 .headers(headers)
-                .body(article_data)
+                .body(CRUD_ARTICLE)
                 .post_request(201))
 
     assert response.get("article").get("title") == "Testing Update Delete"

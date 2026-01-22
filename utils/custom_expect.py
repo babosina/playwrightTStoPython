@@ -35,7 +35,7 @@ class Expect:
         Validates the actual value against a JSON schema.
 
         Args:
-            directory_name: The subdirectory name under response-schemas
+            directory_name: The subdirectory name under response_schemas
             file_name: The schema file name (without _schema.json suffix)
             create_schema_flag: If True, creates the schema file if it doesn't exist
         """

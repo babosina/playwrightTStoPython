@@ -4,7 +4,7 @@ import json
 from genson import SchemaBuilder
 from jsonschema import validate, ValidationError
 
-SCHEMA_BASE_PATH = pathlib.Path(__file__).parent.parent / 'response-schemas'
+SCHEMA_BASE_PATH = pathlib.Path(__file__).parent.parent / 'response_schemas'
 
 
 def load_schema(schema_path: pathlib.Path) -> dict:

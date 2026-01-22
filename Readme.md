@@ -115,3 +115,27 @@ addopts = [
 
 ## Parallel execution (workers concept)
 - Run with: `pytest -n 4` (4 parallel workers)
+
+## Test Data Management (avoiding hardcoded payloads)
+To keep tests clean and maintainable, store request/response payloads outside the test functions and import/load them when needed.
+### Recommended approach (most “pythonic” for tests): Python modules
+Place test payloads in a dedicated Python file (e.g., ) and import constants in tests. `request_data/POST_article.py`
+**Pros**
+- No file I/O or parsing
+- Easy refactoring and reuse across tests
+- Payloads can be composed/extended in Python
+
+### Alternative: JSON files (closest to JS workflow)
+Store payloads as and load them in tests via + . `.json``json``pathlib`
+**Pros**
+- Tool/language-agnostic
+- Easy to share with non-Python tooling
+
+### Built-in config-style option: TOML
+Python 3.11+ includes , so TOML can be used without extra dependencies. `tomllib`
+**Pros**
+- Very human-editable
+- No third-party packages required
+
+### Tip: avoid shared mutable payloads
+If a test modifies a payload, create a copy (e.g., deep copy) to prevent leaking changes into other tests.
