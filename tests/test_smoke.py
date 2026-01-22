@@ -7,6 +7,7 @@ from utils.request_handler import RequestHandler
 from utils.schema_validator import validate_schema
 from copy import deepcopy
 from request_data.POST_article import NEW_ARTICLE_DATA, CRUD_ARTICLE
+from faker import Faker
 
 load_dotenv()
 
@@ -70,7 +71,7 @@ def test_crud_article(api_request: RequestHandler, get_token) -> None:
                 .body(CRUD_ARTICLE)
                 .post_request(201))
 
-    assert response.get("article").get("title") == "Testing Update Delete"
+    assert response.get("article").get("title") == CRUD_ARTICLE["article"]["title"]
 
     articles_response = (api_request
                          .path("./articles")
@@ -78,7 +79,7 @@ def test_crud_article(api_request: RequestHandler, get_token) -> None:
                          .get_request(200))
     article_to_delete = articles_response.get("articles")[0].get("slug")
 
-    modified_title = "Testing Update Delete From Code"
+    modified_title = Faker().sentence()
 
     update_article_response = (api_request
                                .path(f"./articles/{article_to_delete}")
@@ -86,6 +87,12 @@ def test_crud_article(api_request: RequestHandler, get_token) -> None:
                                .body({"article": {"title": modified_title}})
                                .put_request(200))
     expect(update_article_response).should_match_schema("articles", "PUT_articles")
+
+    get_articles_response = (api_request
+                             .path("./articles")
+                             .headers({"Authorization": f"Token {get_token}"})
+                             .get_request(200))
+    assert get_articles_response.get("articles")[0].get("title") == modified_title
 
     new_slug = update_article_response.get("article").get("slug")
 
