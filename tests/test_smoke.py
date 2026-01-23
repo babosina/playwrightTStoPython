@@ -8,6 +8,7 @@ from utils.schema_validator import validate_schema
 from copy import deepcopy
 from request_data.POST_article import NEW_ARTICLE_DATA, CRUD_ARTICLE
 from faker import Faker
+from utils.article_generator import generate_article
 
 load_dotenv()
 
@@ -38,14 +39,13 @@ def test_get_all_tags(api_request: RequestHandler, get_token) -> None:
 
 
 def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
-    new_article_data = deepcopy(NEW_ARTICLE_DATA)
-    new_article_data["article"]["title"] = "Import from file"
+    new_article_data = generate_article()
     create_article_response = (api_request
                                .path("./articles")
                                .headers({"Authorization": f"Token {get_token}"})
                                .body(new_article_data)
                                .post_request(201))
-    assert create_article_response.get("article").get("title") == "Import from file"
+    assert create_article_response.get("article").get("title") == new_article_data["article"]["title"]
     assert create_article_response.get("article").get("tagList") == ["Playwright"]
     expect(create_article_response).should_match_schema("articles", "POST_articles")
 
@@ -53,7 +53,7 @@ def test_create_delete_article(api_request: RequestHandler, get_token) -> None:
                              .path("./articles")
                              .headers({"Authorization": f"Token {get_token}"})
                              .get_request(200))
-    assert get_articles_response.get("articles")[0].get("title") == "Import from file"
+    assert get_articles_response.get("articles")[0].get("title") == new_article_data["article"]["title"]
     article_to_delete = get_articles_response.get("articles")[0].get("slug")
 
     (api_request
