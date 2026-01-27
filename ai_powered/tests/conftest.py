@@ -28,8 +28,8 @@ def api_request(playwright: Playwright) -> Generator[RequestHandler, None, None]
 
 @pytest.fixture(scope="session")
 def auth_token(api_request):
-    email = os.getenv("EMAIL", "pythonqa5@gmail.com")
-    password = os.getenv("PASSWORD", "@$4ca*aGV$")
+    email = os.getenv("EMAIL", "")
+    password = os.getenv("PASSWORD", "")
     
     auth_data = {
         "user": {
