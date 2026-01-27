@@ -3,8 +3,8 @@ import os
 
 class TestAuth:
     def test_login_success(self, api_request):
-        email = os.getenv("EMAIL", "pythonqa5@gmail.com")
-        password = os.getenv("PASSWORD", "@$4ca*aGV$")
+        email = os.getenv("EMAIL", "")
+        password = os.getenv("PASSWORD", "")
         
         auth_data = {
             "user": {
@@ -40,7 +40,7 @@ class TestAuth:
     def test_login_missing_fields(self, api_request):
         auth_data = {
             "user": {
-                "email": "pythonqa5@gmail.com"
+                "email": ""
             }
         }
         
