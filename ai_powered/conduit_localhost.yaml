@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  title: Conduit_LOCALHOST
+  version: 1.0.0
+  description: ''
+servers:
+  - url: http://localhost:8000
+paths:
+  /api/users/login:
+    post:
+      summary: LOCALHOST Get Auth Token
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+            example:
+              user:
+                email: 'some_email'
+                password: 'some_password'
+  /api/tags:
+    get:
+      summary: LOCALHOST Get Tags
+      responses: {}
+  /api/articles:
+    get:
+      summary: LOCALHOST Get Articles
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: '10'
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          example: '0'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Token test
+      responses: {}
+    post:
+      summary: LOCALHOST Create Article
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Token test
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    body:
+                      type: string
+                    tagList:
+                      type: array
+                      items:
+                        type: string
+            example:
+              article:
+                title: Testing APIs with Postman from Postman
+                description: Amazing features
+                body: Come use Postman for the API testing with us!
+                tagList:
+                  - Playwright
+  /api/articles/testing-apis-with-postman-from-postman:
+    put:
+      summary: LOCALHOST Update Article
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Token test
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    body:
+                      type: string
+            example:
+              article:
+                title: Come use Postman for the API testing with us!
+                description: Some cool stuff!
+                body: CHANGE IT
+  /api/articles/Testing-APIs-with-Postman-from-Postman-36804:
+    delete:
+      summary: LOCALHOST Delete Article
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: >-
+            Token test
+      responses: {}

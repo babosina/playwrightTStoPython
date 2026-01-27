@@ -1,0 +1,12 @@
+# PHASE 1 - Create a Plan
+Follow the instructions in the following document (Instructions.md).
+You don't need to execute the code, but rather create a plan that will be used later as a baseline for the actual tests.
+
+# PHASE 2 - Understand the Plan
+Follow the plan described in the ExecutionPlan.md and create a folder structure for the future tests.
+You should create it inside the ./ai-powered folder. No other folders should be touched.
+
+# PHASE 3 - Parse the API spec and create the tests
+Parse the API specification in the ./ai-powered/conduit_localhost.yaml file.
+Add the actual tests for the auth, articles and tags in the corresponding files.
+
