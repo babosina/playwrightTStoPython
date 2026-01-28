@@ -1,13 +1,26 @@
-# Playwright Python API Testing Framework
+# Playwright Python API & UI Testing Framework
 
-API testing framework migrated from TypeScript to Python. Based on: https://github.com/babosina/playwrightTS
+This project is a comprehensive testing framework for the "Conduit" RealWorld application, featuring both API and UI test suites. It was migrated from a TypeScript-based Playwright framework to Python ([repository](https://github.com/babosina/playwrightTS)).
 
-## Prerequisites
+The application under test is a Django + Angular implementation of the RealWorld spec: [realworld-django-rest-framework-angular](https://github.com/babosina/realworld-django-rest-framework-angular).
 
-- Python 3.13+
-- uv (recommended) or pip
+## 🚀 Key Elements
 
-## Project Setup
+- **RequestHandler**: A fluent API wrapper around Playwright's `APIRequestContext` for building and sending requests with automatic logging.
+- **Custom Expect**: An `Expect` class providing chainable, readable assertions (e.g., `expect(response).to_have_status_code(200)`).
+- **Schema Validation**: Automated validation of API responses against JSON schemas located in `response_schemas/`.
+- **UI Testing**: Comprehensive UI test suites using Playwright's Page Object model and functional testing patterns.
+- **AI-Powered Testing**: Experimental test suites (in `ai_powered/`) demonstrating AI-assisted test generation and execution.
+- **Article Generator**: Utility for generating dynamic test data for articles.
+- **APILogger**: Centralized logging for all API interactions.
+
+## 📋 Prerequisites
+
+- **Python 3.13+**
+- **uv** (recommended) or **pip**
+- **Docker** (for running the application locally)
+
+## 🛠️ Project Setup
 
 1. **Clone the repository**
    ```bash
@@ -16,34 +29,56 @@ API testing framework migrated from TypeScript to Python. Based on: https://gith
    ```
 
 2. **Install dependencies**
+   Using `uv` (recommended):
    ```bash
    uv pip install -e .
    ```
-   Or with pip:
+   Using `pip`:
    ```bash
    pip install -e .
    ```
 
-3. **Configure environment variables**
-
-   Create a `.env` file in the project root:
+3. **Install Playwright Browsers**
+   ```bash
+   playwright install
    ```
+
+4. **Configure environment variables**
+   Create a `.env` file in the project root:
+   ```env
    EMAIL=your-email@example.com
    PASSWORD=your-password
    ```
 
-4. **Update base URL (if needed)**
+## 🖥️ Running the Application
 
-   The project is configured for `localhost:8000`. To change it, update `conftest.py:17`:
-   ```python
-   base_url = "http://localhost:8000/api/"
-   ```
+To run the application locally using Docker (requires the app repository to be forked and cloned separately):
 
-## Running Tests
-
-**Run all tests:**
 ```bash
-pytest
+# Fork the application repository on GitHub:
+# https://github.com/babosina/realworld-django-rest-framework-angular
+
+# Clone your forked repository
+git clone https://github.com/<your-username>/realworld-django-rest-framework-angular
+cd realworld-django-rest-framework-angular
+
+# Start the application using Docker Compose
+docker-compose up -d
+
+# Seed the database (if needed)
+docker-compose exec backend python manage.py migrate
+docker-compose exec backend python manage.py seed_db
+```
+The application Backend will be available at `http://localhost:8000`.
+
+The application Frontend will be available at `http://localhost:4200`.
+
+## 🧪 Running Tests
+
+### API Tests
+**Run all API tests:**
+```bash
+pytest tests/
 ```
 
 **Run specific test file:**
@@ -51,91 +86,46 @@ pytest
 pytest tests/test_smoke.py
 ```
 
-**Run with parallel execution:**
+### UI Tests
+**Run UI tests:**
 ```bash
-pytest -n 4
+pytest ai_powered/ui_tests/
 ```
 
-## Project Structure
+### General Pytest Commands
+- **Parallel execution:** `pytest -n 4`
+- **Headed mode:** `pytest --headed`
+- **Generate HTML Report:** `pytest --html=report.html --self-contained-html`
+
+## 📂 Project Structure
 
 ```
-├── tests/              # Test suites
-│   ├── test_smoke.py
-│   ├── test_crud_operations.py
-│   └── test_example.py
-├── utils/              # Utilities and helpers
-│   ├── apilogger.py           # Request/response logging
-│   ├── custom_expect.py       # Custom assertions (Expect class)
-│   ├── request_handler.py     # API request wrapper
-├── conftest.py         # Pytest fixtures (api_request, get_token)
-├── pyproject.toml      # Project configuration
-└── .env               # Environment variables (not in git)
+├── ai_powered/           # AI-assisted and UI test suites
+│   ├── tests/            # AI-generated API tests
+│   ├── ui_tests/         # UI test suite
+│   └── ui_tests_mcp/     # UI tests using MCP
+├── tests/                # Standard API test suites
+├── utils/                # Core utilities (RequestHandler, Expect, etc.)
+├── response_schemas/     # JSON schemas for API validation
+├── request_data/         # Static/dynamic request payloads
+├── conftest.py           # Global Pytest fixtures
+├── pyproject.toml        # Project configuration & dependencies
+└── .env                  # Environment variables (ignored by git)
 ```
 
-## Key Features
+## 📊 Reports
 
-- **Custom Request Handler**: Fluent API for building requests (`RequestHandler` class)
-- **Custom Assertions**: `Expect` class with chainable assertions
-- **Request/Response Logging**: Automatic logging with custom status code validation
-- **Token Authentication**: Reusable `get_token` fixture
-- **HTML Reports**: Generated in `report.html`
-- **Allure Reports**: Results stored in `allure-results/`
+- **HTML Report**: Generated automatically in `report.html` (as configured in `pyproject.toml`).
+- **Allure Report**:
+  ```bash
+  # Generate and open report
+  allure generate allure-results -o allure-report --clean
+  allure open allure-report
+  ```
 
-## Generating Reports
+## 💡 Notes & Best Practices
 
-**HTML Report:**
-Generated automatically after test run in `report.html`
-
-**Allure Report:**
-```bash
-allure generate allure-results -o allure-report --clean
-allure open allure-report
-```
-
-## Configuration
-
-Test configuration is in `pyproject.toml`:
-```toml
-[tool.pytest.ini_options]
-base_url = ""
-addopts = [
-    "--html=report.html", "--self-contained-html",
-    "--alluredir=allure-results",
-    "--tracing=retain-on-failure",
-    "--video=retain-on-failure",
-    "--screenshot=only-on-failure"
-]
-```
-
-## Notes
-
-- This project focuses on **API testing only** (no browser UI testing)
-- Custom `Expect` class provides JavaScript-like assertion syntax
-- See `Differences.md` for details on TS to Python migration differences
-
-## Parallel execution (workers concept)
-- Run with: `pytest -n 4` (4 parallel workers)
-
-## Test Data Management (avoiding hardcoded payloads)
-To keep tests clean and maintainable, store request/response payloads outside the test functions and import/load them when needed.
-### Recommended approach (most “pythonic” for tests): Python modules
-Place test payloads in a dedicated Python file (e.g., ) and import constants in tests. `request_data/POST_article.py`
-**Pros**
-- No file I/O or parsing
-- Easy refactoring and reuse across tests
-- Payloads can be composed/extended in Python
-
-### Alternative: JSON files (closest to JS workflow)
-Store payloads as and load them in tests via + . `.json``json``pathlib`
-**Pros**
-- Tool/language-agnostic
-- Easy to share with non-Python tooling
-
-### Built-in config-style option: TOML
-Python 3.11+ includes , so TOML can be used without extra dependencies. `tomllib`
-**Pros**
-- Very human-editable
-- No third-party packages required
-
-### Tip: avoid shared mutable payloads
-If a test modifies a payload, create a copy (e.g., deep copy) to prevent leaking changes into other tests.
+- **Test Data**: Prefer using `ArticleGenerator` or Python modules in `request_data/` instead of hardcoded strings.
+- **Assertions**: Use the custom `Expect` class for API tests to maintain consistency with Playwright's UI assertion style.
+- **Parallelism**: Use `pytest-xdist` (`-n` flag) for faster execution of independent tests.
+- **Migration**: See `Differences.md` for details on the TypeScript to Python migration.
