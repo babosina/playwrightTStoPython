@@ -3,6 +3,7 @@
 report.html
 /assets
 .env
+.ai
 
 /allure-report
 /allure-results

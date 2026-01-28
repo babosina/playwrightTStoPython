@@ -10,3 +10,24 @@ You should create it inside the ./ai-powered folder. No other folders should be 
 Parse the API specification in the ./ai-powered/conduit_localhost.yaml file.
 Add the actual tests for the auth, articles and tags in the corresponding files.
 
+# PHASE 4 - Generate UI tests
+Use Playwright MCP to do the following for URL: http://localhost:4200/#/
+1. Discover key pages and components (nav, login, sigh up, articles, etc).
+2. Produce a test plan with ~6 test cases (title, intent, preconditions, steps, assertions). Save it in ./ai_powered/ui_tests folder under the name UITestsPlan.md.
+3. Ask me 3-5 clarification questions ONLY if required.
+4. Then generate pytest Playwright tests in the ./ai_powered/ui_tests folder.
+5. Use robust locators (get_by_role / get_by_label / get_by_placeholder) and avoid brittle CSS/XPath.
+6. Add screenshots on failure and keep tests independent.
+
+Test Case example:
+1. Navigate to the home page.
+2. Make assertion that the home page is loaded.
+3. Navigate to the Sign up page (/register).
+4. Enter some valid test data.
+5. Assert the account is created successfully.
+
+Test Case example 2:
+1. Navigate to the home page.
+2. Make assertion that the home page is loaded.
+3. Chose any article and try to like it.
+4. Assert the redirect to the Sign in page for the non logged in user.
