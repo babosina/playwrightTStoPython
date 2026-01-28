@@ -74,12 +74,37 @@ expect(locator).to_be_visible()
 ## Configuration
 
 ### Config File
-- **TypeScript**: `playwright.config.ts`
-- **Python**: `pytest.ini`, `pyproject.toml`, or `conftest.py`
+- **TypeScript**: `playwright.config.ts` (often uses `defineConfig`)
+- **Python**: `pyproject.toml` (with `[tool.pytest.ini_options]`), `pytest.ini`, or `conftest.py`
 
 ### Test File Pattern
 - **TypeScript**: `*.spec.ts` or `*.test.ts`
 - **Python**: `test_*.py` or `*_test.py`
+
+## Project Structure and Naming
+
+### Directory and File Naming
+- **TypeScript**: camelCase is common for folders and files (e.g., `requestObjects`, `responseSchemas`, `smoke.spec.ts`)
+- **Python**: snake_case is the standard for folders and files (e.g., `request_data`, `response_schemas`, `test_smoke.py`)
+
+### Folder Mapping
+| Feature | Playwright TS Folder | Playwright Python Folder |
+| --- | --- | --- |
+| Test Files | `tests/` | `tests/` |
+| Request Data | `requestObjects/` | `request_data/` |
+| Response Schemas | `responseSchemas/` | `response_schemas/` |
+| Utilities | `utils/` | `utils/` |
+| Fixtures/Hooks | `utils/fixtures.ts` | `conftest.py` |
+
+## Test Implementation Patterns
+
+### API Testing Wrappers
+Both repositories often use a custom wrapper (e.g., `RequestHandler`) to simplify API interactions.
+
+### Custom Assertions
+Both versions implement custom matchers for schema validation:
+- **TypeScript**: `await expect(response).shouldMatchSchema('folder', 'schema')`
+- **Python**: `expect(response).should_match_schema("folder", "schema")`
 
 ## Test Structure
 
