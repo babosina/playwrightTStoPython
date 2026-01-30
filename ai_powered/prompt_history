@@ -4,10 +4,10 @@ You don't need to execute the code, but rather create a plan that will be used l
 
 # PHASE 2 - Understand the Plan
 Follow the plan described in the ExecutionPlan.md and create a folder structure for the future tests.
-You should create it inside the ./ai-powered folder. No other folders should be touched.
+You should create it inside the ./ai_powered folder. No other folders should be touched.
 
 # PHASE 3 - Parse the API spec and create the tests
-Parse the API specification in the ./ai-powered/conduit_localhost.yaml file.
+Parse the API specification in the ./ai_powered/conduit_localhost.yaml file.
 Add the actual tests for the auth, articles and tags in the corresponding files.
 
 # PHASE 4 - Generate UI tests
@@ -30,4 +30,4 @@ Test Case example 2:
 1. Navigate to the home page.
 2. Make assertion that the home page is loaded.
 3. Chose any article and try to like it.
-4. Assert the redirect to the Sign in page for the non logged in user.
+4. Assert the redirect to the Sign in page for the unauthorized in user.

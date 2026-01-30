@@ -31,7 +31,7 @@ The application under test is a Django + Angular implementation of the RealWorld
 2. **Install dependencies**
    Using `uv` (recommended):
    ```bash
-   uv pip install -e .
+   uv sync
    ```
    Using `pip`:
    ```bash
@@ -116,7 +116,7 @@ pytest ai_powered/ui_tests/
 ## 📊 Reports
 
 - **HTML Report**: Generated automatically in `report.html` (as configured in `pyproject.toml`).
-- **Allure Report**:
+- **Allure Report** (to be updated):
   ```bash
   # Generate and open report
   allure generate allure-results -o allure-report --clean
